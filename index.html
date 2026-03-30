@@ -1,25 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Freelancer Rate Simulator</title>
-  <meta name="description" content="Calculate your ideal freelance hourly rate based on your income goals, expenses, and work schedule. Multi-currency & multi-language support." />
+  <meta name="description"
+    content="Calculate your ideal freelance hourly rate based on your income goals, expenses, and work schedule. Multi-currency & multi-language support." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <style>
-    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
 
     :root {
       --bg-primary: #0a0a0f;
       --bg-secondary: #12121a;
-      --bg-card: rgba(255,255,255,0.04);
-      --bg-card-hover: rgba(255,255,255,0.06);
-      --bg-input: rgba(255,255,255,0.06);
-      --bg-input-focus: rgba(255,255,255,0.1);
-      --border-subtle: rgba(255,255,255,0.08);
-      --border-focus: rgba(139,92,246,0.5);
+      --bg-card: rgba(255, 255, 255, 0.04);
+      --bg-card-hover: rgba(255, 255, 255, 0.06);
+      --bg-input: rgba(255, 255, 255, 0.06);
+      --bg-input-focus: rgba(255, 255, 255, 0.1);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-focus: rgba(139, 92, 246, 0.5);
       --text-primary: #f0f0f5;
       --text-secondary: #9ca3af;
       --text-muted: #6b7280;
@@ -31,16 +40,16 @@
       --accent-rose: #f43f5e;
       --gradient-primary: linear-gradient(135deg, #8b5cf6, #3b82f6);
       --gradient-result: linear-gradient(135deg, #10b981, #3b82f6);
-      --gradient-bg: radial-gradient(ellipse at 20% 0%, rgba(139,92,246,0.12) 0%, transparent 50%),
-                      radial-gradient(ellipse at 80% 100%, rgba(59,130,246,0.08) 0%, transparent 50%);
-      --shadow-glow: 0 0 60px rgba(139,92,246,0.15);
+      --gradient-bg: radial-gradient(ellipse at 20% 0%, rgba(139, 92, 246, 0.12) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 100%, rgba(59, 130, 246, 0.08) 0%, transparent 50%);
+      --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.15);
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 24px;
-      --transition-fast: 0.2s cubic-bezier(0.4,0,0.2,1);
-      --transition-smooth: 0.4s cubic-bezier(0.4,0,0.2,1);
-      --transition-bounce: 0.6s cubic-bezier(0.34,1.56,0.64,1);
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     html {
@@ -81,15 +90,52 @@
       z-index: 0;
       animation: float 20s ease-in-out infinite;
     }
-    .orb-1 { width:300px;height:300px;background:var(--accent-purple);top:-100px;left:-50px;animation-delay:0s }
-    .orb-2 { width:250px;height:250px;background:var(--accent-blue);bottom:-80px;right:-60px;animation-delay:-7s }
-    .orb-3 { width:180px;height:180px;background:var(--accent-emerald);top:50%;right:10%;animation-delay:-14s }
+
+    .orb-1 {
+      width: 300px;
+      height: 300px;
+      background: var(--accent-purple);
+      top: -100px;
+      left: -50px;
+      animation-delay: 0s
+    }
+
+    .orb-2 {
+      width: 250px;
+      height: 250px;
+      background: var(--accent-blue);
+      bottom: -80px;
+      right: -60px;
+      animation-delay: -7s
+    }
+
+    .orb-3 {
+      width: 180px;
+      height: 180px;
+      background: var(--accent-emerald);
+      top: 50%;
+      right: 10%;
+      animation-delay: -14s
+    }
 
     @keyframes float {
-      0%,100%{transform:translate(0,0) scale(1)}
-      25%{transform:translate(30px,-20px) scale(1.05)}
-      50%{transform:translate(-20px,30px) scale(0.95)}
-      75%{transform:translate(15px,15px) scale(1.02)}
+
+      0%,
+      100% {
+        transform: translate(0, 0) scale(1)
+      }
+
+      25% {
+        transform: translate(30px, -20px) scale(1.05)
+      }
+
+      50% {
+        transform: translate(-20px, 30px) scale(0.95)
+      }
+
+      75% {
+        transform: translate(15px, 15px) scale(1.02)
+      }
     }
 
     /* ===== Container ===== */
@@ -130,7 +176,7 @@
     }
 
     .top-bar select:hover {
-      border-color: rgba(255,255,255,0.15);
+      border-color: rgba(255, 255, 255, 0.15);
       color: var(--text-primary);
     }
 
@@ -150,8 +196,8 @@
       gap: 6px;
       padding: 6px 14px;
       border-radius: 100px;
-      background: rgba(139,92,246,0.12);
-      border: 1px solid rgba(139,92,246,0.2);
+      background: rgba(139, 92, 246, 0.12);
+      border: 1px solid rgba(139, 92, 246, 0.2);
       font-size: 0.75rem;
       font-weight: 600;
       color: var(--accent-purple-light);
@@ -161,7 +207,10 @@
       animation: fadeInDown 0.6s ease-out;
     }
 
-    .header-badge svg { width:14px;height:14px }
+    .header-badge svg {
+      width: 14px;
+      height: 14px
+    }
 
     .header h1 {
       font-size: 1.75rem;
@@ -185,8 +234,15 @@
     }
 
     @keyframes fadeInDown {
-      from{opacity:0;transform:translateY(-12px)}
-      to{opacity:1;transform:translateY(0)}
+      from {
+        opacity: 0;
+        transform: translateY(-12px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
     }
 
     /* ===== Card ===== */
@@ -205,18 +261,33 @@
     .card::before {
       content: '';
       position: absolute;
-      top:0;left:0;right:0;height:1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
     }
 
     @keyframes fadeInUp {
-      from{opacity:0;transform:translateY(20px)}
-      to{opacity:1;transform:translateY(0)}
+      from {
+        opacity: 0;
+        transform: translateY(20px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
     }
 
     /* ===== Form ===== */
-    .form-group { margin-bottom: 1.25rem }
-    .form-group:last-of-type { margin-bottom: 1.5rem }
+    .form-group {
+      margin-bottom: 1.25rem
+    }
+
+    .form-group:last-of-type {
+      margin-bottom: 1.5rem
+    }
 
     .form-label {
       display: flex;
@@ -241,7 +312,9 @@
       font-weight: 400;
     }
 
-    .input-wrapper { position: relative }
+    .input-wrapper {
+      position: relative
+    }
 
     .input-prefix {
       position: absolute;
@@ -282,23 +355,30 @@
     }
 
     input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none }
+    input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none
+    }
 
-    input.has-prefix { padding-left: 2rem }
-    input.has-suffix { padding-right: 5.5rem }
+    input.has-prefix {
+      padding-left: 2rem
+    }
+
+    input.has-suffix {
+      padding-right: 5.5rem
+    }
 
     input[type="number"]:hover {
-      border-color: rgba(255,255,255,0.15);
+      border-color: rgba(255, 255, 255, 0.15);
       background: var(--bg-input-focus);
     }
 
     input[type="number"]:focus {
       border-color: var(--border-focus);
       background: var(--bg-input-focus);
-      box-shadow: 0 0 0 3px rgba(139,92,246,0.1);
+      box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
     }
 
-    input[type="number"]:focus ~ .input-prefix {
+    input[type="number"]:focus~.input-prefix {
       color: var(--accent-purple-light);
     }
 
@@ -308,7 +388,7 @@
       gap: 0.75rem;
       margin-bottom: 1.5rem;
       padding: 0.75rem 1rem;
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.02);
       border: 1px solid var(--border-subtle);
       border-radius: var(--radius-md);
     }
@@ -356,18 +436,23 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
       opacity: 0;
       transition: opacity var(--transition-fast);
     }
 
     .btn-calculate:hover {
       transform: translateY(-1px);
-      box-shadow: 0 8px 30px rgba(139,92,246,0.3);
+      box-shadow: 0 8px 30px rgba(139, 92, 246, 0.3);
     }
 
-    .btn-calculate:hover::before { opacity: 1 }
-    .btn-calculate:active { transform: translateY(0) }
+    .btn-calculate:hover::before {
+      opacity: 1
+    }
+
+    .btn-calculate:active {
+      transform: translateY(0)
+    }
 
     .btn-text {
       position: relative;
@@ -384,7 +469,9 @@
       transition: transform var(--transition-fast);
     }
 
-    .btn-calculate:hover .btn-text svg { transform: rotate(90deg) }
+    .btn-calculate:hover .btn-text svg {
+      transform: rotate(90deg)
+    }
 
     /* ===== Results ===== */
     .results-section {
@@ -402,8 +489,8 @@
       text-align: center;
       padding: 1.75rem 1rem;
       border-radius: var(--radius-lg);
-      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(59,130,246,0.08));
-      border: 1px solid rgba(16,185,129,0.15);
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08));
+      border: 1px solid rgba(16, 185, 129, 0.15);
       margin-bottom: 0.75rem;
       position: relative;
       overflow: hidden;
@@ -412,8 +499,11 @@
     .result-main::before {
       content: '';
       position: absolute;
-      top:0;left:0;right:0;height:1px;
-      background: linear-gradient(90deg, transparent, rgba(16,185,129,0.3), transparent);
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent);
     }
 
     .result-label {
@@ -437,7 +527,11 @@
       animation: countUp 0.6s var(--transition-bounce) both;
     }
 
-    .result-currency-symbol { font-size: 1.5rem; font-weight: 700 }
+    .result-currency-symbol {
+      font-size: 1.5rem;
+      font-weight: 700
+    }
+
     .result-period {
       font-size: 0.8125rem;
       color: var(--text-secondary);
@@ -446,8 +540,15 @@
     }
 
     @keyframes countUp {
-      from{opacity:0;transform:scale(0.5)}
-      to{opacity:1;transform:scale(1)}
+      from {
+        opacity: 0;
+        transform: scale(0.5)
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1)
+      }
     }
 
     /* ===== Sub Results Grid ===== */
@@ -461,14 +562,14 @@
     .sub-result-card {
       padding: 0.875rem;
       border-radius: var(--radius-md);
-      background: rgba(255,255,255,0.03);
+      background: rgba(255, 255, 255, 0.03);
       border: 1px solid var(--border-subtle);
       transition: all var(--transition-fast);
     }
 
     .sub-result-card:hover {
       background: var(--bg-card-hover);
-      border-color: rgba(255,255,255,0.12);
+      border-color: rgba(255, 255, 255, 0.12);
     }
 
     .sub-result-label {
@@ -486,17 +587,28 @@
       color: var(--text-primary);
     }
 
-    .sub-result-card.recommended .sub-result-label { color: var(--accent-purple-light) }
-    .sub-result-card.recommended .sub-result-value { color: var(--accent-purple-light) }
-    .sub-result-card.gross .sub-result-label { color: var(--accent-amber) }
-    .sub-result-card.gross .sub-result-value { color: var(--accent-amber) }
+    .sub-result-card.recommended .sub-result-label {
+      color: var(--accent-purple-light)
+    }
+
+    .sub-result-card.recommended .sub-result-value {
+      color: var(--accent-purple-light)
+    }
+
+    .sub-result-card.gross .sub-result-label {
+      color: var(--accent-amber)
+    }
+
+    .sub-result-card.gross .sub-result-value {
+      color: var(--accent-amber)
+    }
 
     /* ===== Tax Vault Section ===== */
     .tax-vault {
       padding: 1rem 1.125rem;
       border-radius: var(--radius-md);
-      background: linear-gradient(135deg, rgba(244,63,94,0.06), rgba(139,92,246,0.06));
-      border: 1px solid rgba(244,63,94,0.15);
+      background: linear-gradient(135deg, rgba(244, 63, 94, 0.06), rgba(139, 92, 246, 0.06));
+      border: 1px solid rgba(244, 63, 94, 0.15);
       position: relative;
       overflow: hidden;
     }
@@ -504,8 +616,11 @@
     .tax-vault::before {
       content: '';
       position: absolute;
-      top:0;left:0;right:0;height:1px;
-      background: linear-gradient(90deg, transparent, rgba(244,63,94,0.25), transparent);
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(244, 63, 94, 0.25), transparent);
     }
 
     .tax-vault-header {
@@ -519,7 +634,7 @@
       width: 28px;
       height: 28px;
       border-radius: 8px;
-      background: rgba(244,63,94,0.12);
+      background: rgba(244, 63, 94, 0.12);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -567,7 +682,9 @@
     }
 
     /* ===== Hidden ===== */
-    .results-section.hidden { display: none }
+    .results-section.hidden {
+      display: none
+    }
 
     /* ===== Footer ===== */
     .footer {
@@ -586,7 +703,7 @@
       width: 15px;
       height: 15px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.06);
+      background: rgba(255, 255, 255, 0.06);
       border: 1px solid var(--border-subtle);
       font-size: 0.5rem;
       color: var(--text-muted);
@@ -595,7 +712,10 @@
       flex-shrink: 0;
     }
 
-    .info-icon:hover { background: rgba(255,255,255,0.1); color: var(--text-secondary) }
+    .info-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-secondary)
+    }
 
     .info-icon .tooltip {
       position: absolute;
@@ -616,35 +736,84 @@
       z-index: 10;
     }
 
-    .info-icon:hover .tooltip { opacity: 1 }
+    .info-icon:hover .tooltip {
+      opacity: 1
+    }
 
     /* ===== Responsive ===== */
     @media (max-width: 480px) {
-      body { padding: 1.5rem 0.75rem }
-      .card { padding: 1.5rem }
-      .header h1 { font-size: 1.5rem }
-      .result-value { font-size: 2.5rem }
-      .assumptions { flex-direction: column; gap: 0.5rem }
-      .assumption-item { flex-direction: row; justify-content: space-between; align-items: center }
-      .sub-results { grid-template-columns: 1fr }
-      .tax-vault-grid { grid-template-columns: 1fr }
+      body {
+        padding: 1.5rem 0.75rem
+      }
+
+      .card {
+        padding: 1.5rem
+      }
+
+      .header h1 {
+        font-size: 1.5rem
+      }
+
+      .result-value {
+        font-size: 2.5rem
+      }
+
+      .assumptions {
+        flex-direction: column;
+        gap: 0.5rem
+      }
+
+      .assumption-item {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center
+      }
+
+      .sub-results {
+        grid-template-columns: 1fr
+      }
+
+      .tax-vault-grid {
+        grid-template-columns: 1fr
+      }
     }
 
     /* ===== Shake ===== */
     @keyframes shake {
-      0%,100%{transform:translateX(0)}
-      20%{transform:translateX(-6px)}
-      40%{transform:translateX(6px)}
-      60%{transform:translateX(-4px)}
-      80%{transform:translateX(4px)}
+
+      0%,
+      100% {
+        transform: translateX(0)
+      }
+
+      20% {
+        transform: translateX(-6px)
+      }
+
+      40% {
+        transform: translateX(6px)
+      }
+
+      60% {
+        transform: translateX(-4px)
+      }
+
+      80% {
+        transform: translateX(4px)
+      }
     }
-    .shake { animation: shake 0.4s ease-in-out }
+
+    .shake {
+      animation: shake 0.4s ease-in-out
+    }
+
     input.input-error {
       border-color: #ef4444 !important;
-      box-shadow: 0 0 0 3px rgba(239,68,68,0.1) !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
     }
   </style>
 </head>
+
 <body>
   <div class="orb orb-1" aria-hidden="true"></div>
   <div class="orb orb-2" aria-hidden="true"></div>
@@ -673,13 +842,15 @@
     <!-- Header -->
     <header class="header">
       <div class="header-badge">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+          stroke-linejoin="round">
           <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
         </svg>
         <span data-i18n="badge">Rate Simulator</span>
       </div>
       <h1 data-i18n="title">Know Your Worth.</h1>
-      <p data-i18n="subtitle">Calculate the minimum hourly rate you need to charge<br/>to hit your income goals as a freelancer.</p>
+      <p data-i18n="subtitle">Calculate the minimum hourly rate you need to charge<br />to hit your income goals as a
+        freelancer.</p>
     </header>
 
     <!-- Calculator Card -->
@@ -697,7 +868,8 @@
             <span class="form-label-hint" data-i18n="hint_annual">Annual</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="net-income" class="has-prefix has-suffix" placeholder="60,000" min="0" step="1000" required />
+            <input type="number" id="net-income" class="has-prefix has-suffix" placeholder="60,000" min="0" step="1000"
+              required />
             <span class="input-prefix" id="prefix-income">$</span>
             <span class="input-suffix" data-i18n="suffix_year">/ year</span>
           </div>
@@ -715,7 +887,8 @@
             <span class="form-label-hint" data-i18n="hint_annual">Annual</span>
           </div>
           <div class="input-wrapper">
-            <input type="number" id="expenses" class="has-prefix has-suffix" placeholder="5,000" min="0" step="500" required />
+            <input type="number" id="expenses" class="has-prefix has-suffix" placeholder="5,000" min="0" step="500"
+              required />
             <span class="input-prefix" id="prefix-expenses">$</span>
             <span class="input-suffix" data-i18n="suffix_year">/ year</span>
           </div>
@@ -758,7 +931,8 @@
         <button type="submit" class="btn-calculate" id="btn-calculate">
           <span class="btn-text">
             <span data-i18n="btn_calc">Calculate My Rate</span>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round">
               <line x1="5" y1="12" x2="19" y2="12" />
               <polyline points="12 5 19 12 12 19" />
             </svg>
@@ -976,12 +1150,12 @@
 
     // ===== Currency Config =====
     const CURRENCIES = {
-      USD: { symbol: "$",  locale: "en-US",  decimal: 0 },
-      GBP: { symbol: "£",  locale: "en-GB",  decimal: 0 },
-      EUR: { symbol: "€",  locale: "de-DE",  decimal: 0 },
-      CAD: { symbol: "C$", locale: "en-CA",  decimal: 0 },
-      AUD: { symbol: "A$", locale: "en-AU",  decimal: 0 },
-      JPY: { symbol: "¥",  locale: "ja-JP",  decimal: 0 }
+      USD: { symbol: "$", locale: "en-US", decimal: 0 },
+      GBP: { symbol: "£", locale: "en-GB", decimal: 0 },
+      EUR: { symbol: "€", locale: "de-DE", decimal: 0 },
+      CAD: { symbol: "C$", locale: "en-CA", decimal: 0 },
+      AUD: { symbol: "A$", locale: "en-AU", decimal: 0 },
+      JPY: { symbol: "¥", locale: "ja-JP", decimal: 0 }
     };
 
     // ===== State =====
@@ -1161,4 +1335,5 @@
     updateCurrencySymbols();
   </script>
 </body>
+
 </html>

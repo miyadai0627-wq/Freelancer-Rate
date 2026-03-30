@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Revenue Progress</title>
+  <meta name="description" content="Track your monthly revenue goal with a beautiful animated progress ring." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.06);
+      --bg-input: rgba(255,255,255,0.06);
+      --bg-input-focus: rgba(255,255,255,0.1);
+      --border-subtle: rgba(255,255,255,0.08);
+      --border-focus: rgba(16,185,129,0.5);
+      --text-primary: #f0f0f5;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-emerald: #10b981;
+      --accent-emerald-light: #34d399;
+      --accent-blue: #3b82f6;
+      --accent-amber: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-purple: #8b5cf6;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --transition-fast: 0.2s cubic-bezier(0.4,0,0.2,1);
+      --transition-smooth: 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html { font-size:16px; -webkit-font-smoothing:antialiased }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 25% 0%, rgba(16,185,129,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 75% 100%, rgba(59,130,246,0.07) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .orb {
+      position: fixed; border-radius: 50%; filter: blur(80px);
+      opacity: 0.25; pointer-events: none;
+      animation: float 20s ease-in-out infinite;
+    }
+    .orb-1{width:280px;height:280px;background:var(--accent-emerald);top:-80px;right:-40px}
+    .orb-2{width:200px;height:200px;background:var(--accent-blue);bottom:-60px;left:-30px;animation-delay:-8s}
+
+    @keyframes float {
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(-15px,20px) scale(0.95)}
+    }
+
+    .container { position:relative;z-index:1;width:100%;max-width:480px }
+
+    /* Top Bar */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .top-bar select {
+      padding: 6px 28px 6px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 100px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      transition: all var(--transition-fast);
+    }
+    .top-bar select:hover{border-color:rgba(255,255,255,0.15);color:var(--text-primary)}
+
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+    /* Header */
+    .header { text-align:center;margin-bottom:1.75rem }
+
+    .header-badge {
+      display: inline-flex;align-items:center;gap:6px;
+      padding:6px 14px;border-radius:100px;
+      background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.2);
+      font-size:0.75rem;font-weight:600;color:var(--accent-emerald-light);
+      letter-spacing:0.05em;text-transform:uppercase;margin-bottom:1rem;
+      animation:fadeInDown 0.6s ease-out;
+    }
+
+    .header h1 {
+      font-size:1.5rem;font-weight:800;letter-spacing:-0.03em;
+      background:linear-gradient(135deg,#f0f0f5,#9ca3af);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+      animation:fadeInDown 0.6s ease-out 0.1s both;
+    }
+
+    .header p {
+      font-size:0.8125rem;color:var(--text-secondary);margin-top:0.5rem;
+      animation:fadeInDown 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Card */
+    .card {
+      background:var(--bg-card);border:1px solid var(--border-subtle);
+      border-radius:var(--radius-xl);padding:2rem;
+      backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+      animation:fadeInUp 0.6s ease-out 0.3s both;
+      position:relative;overflow:hidden;
+    }
+    .card::before {
+      content:'';position:absolute;top:0;left:0;right:0;height:1px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent);
+    }
+
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+    /* Input Row */
+    .input-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .form-group {}
+
+    .form-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.375rem;
+      display: block;
+    }
+
+    .input-wrapper { position: relative }
+
+    .input-prefix {
+      position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      font-size:0.8125rem;font-weight:500;color:var(--text-muted);pointer-events:none;
+      transition:color var(--transition-fast);
+    }
+
+    input[type="number"] {
+      width:100%;padding:0.75rem 0.75rem 0.75rem 1.75rem;
+      border:1px solid var(--border-subtle);border-radius:var(--radius-md);
+      background:var(--bg-input);color:var(--text-primary);
+      font-family:'Inter',sans-serif;font-size:0.875rem;font-weight:500;
+      transition:all var(--transition-fast);outline:none;
+      -moz-appearance:textfield;
+    }
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none}
+    input[type="number"]:hover{border-color:rgba(255,255,255,0.15);background:var(--bg-input-focus)}
+    input[type="number"]:focus{border-color:var(--border-focus);background:var(--bg-input-focus);box-shadow:0 0 0 3px rgba(16,185,129,0.1)}
+    input[type="number"]:focus~.input-prefix{color:var(--accent-emerald-light)}
+
+    /* Ring Section */
+    .ring-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .ring-wrapper {
+      position: relative;
+      width: 240px;
+      height: 240px;
+    }
+
+    .ring-svg {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .ring-track {
+      fill: none;
+      stroke: rgba(255,255,255,0.04);
+      stroke-width: 10;
+    }
+
+    .ring-progress {
+      fill: none;
+      stroke-width: 10;
+      stroke-linecap: round;
+      stroke-dasharray: 565.49;
+      stroke-dashoffset: 565.49;
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.34,1.56,0.64,1), stroke 0.5s ease;
+    }
+
+    .ring-glow {
+      fill: none;
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-dasharray: 565.49;
+      stroke-dashoffset: 565.49;
+      opacity: 0.2;
+      filter: blur(6px);
+      transition: stroke-dashoffset 1.5s cubic-bezier(0.34,1.56,0.64,1), stroke 0.5s ease;
+    }
+
+    .ring-center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .ring-percent {
+      font-size: 3.25rem;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      transition: color 0.5s ease;
+    }
+
+    .ring-percent-symbol {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .ring-status {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.375rem;
+    }
+
+    /* Color tiers */
+    .tier-low .ring-progress, .tier-low .ring-glow { stroke: var(--accent-red) }
+    .tier-low .ring-percent { color: var(--accent-red) }
+
+    .tier-mid .ring-progress, .tier-mid .ring-glow { stroke: var(--accent-amber) }
+    .tier-mid .ring-percent { color: var(--accent-amber) }
+
+    .tier-high .ring-progress, .tier-high .ring-glow { stroke: var(--accent-emerald) }
+    .tier-high .ring-percent { color: var(--accent-emerald-light) }
+
+    .tier-over .ring-progress, .tier-over .ring-glow { stroke: var(--accent-purple) }
+    .tier-over .ring-percent { color: var(--accent-purple) }
+
+    /* Breakdown */
+    .breakdown {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.625rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .breakdown-card {
+      padding: 0.875rem 0.5rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+    .breakdown-card:hover{background:var(--bg-card-hover);border-color:rgba(255,255,255,0.12)}
+
+    .breakdown-value {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .breakdown-label {
+      font-size: 0.5625rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .breakdown-card.earned .breakdown-value { color: var(--accent-emerald-light) }
+    .breakdown-card.remaining .breakdown-value { color: var(--accent-amber) }
+    .breakdown-card.daily .breakdown-value { color: var(--accent-blue) }
+
+    /* Milestone bar */
+    .milestones {
+      padding: 1rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .milestones-header {
+      font-size: 0.625rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.75rem;
+    }
+
+    .milestone-bar {
+      position: relative;
+      height: 8px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 100px;
+      margin-bottom: 0.5rem;
+      overflow: hidden;
+    }
+
+    .milestone-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: linear-gradient(90deg, var(--accent-emerald), var(--accent-blue));
+      transition: width 1.5s cubic-bezier(0.34,1.56,0.64,1);
+      position: relative;
+    }
+
+    .milestone-fill::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(16,185,129,0.5);
+    }
+
+    .milestone-markers {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .milestone-marker {
+      font-size: 0.5625rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .milestone-marker.active { color: var(--accent-emerald-light); font-weight: 600 }
+
+    /* Footer */
+    .footer {
+      text-align:center;margin-top:1.25rem;
+      font-size:0.6875rem;color:var(--text-muted);
+      animation:fadeInUp 0.6s ease-out 0.5s both;
+    }
+
+    @media (max-width: 480px) {
+      body{padding:1.5rem 0.75rem}
+      .card{padding:1.5rem}
+      .ring-wrapper{width:200px;height:200px}
+      .ring-percent{font-size:2.5rem}
+      .breakdown{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="top-bar">
+      <select id="lang-select" aria-label="Language">
+        <option value="en">🌐 English</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+      <select id="currency-select" aria-label="Currency">
+        <option value="USD">$ USD</option>
+        <option value="GBP">£ GBP</option>
+        <option value="EUR">€ EUR</option>
+        <option value="CAD">C$ CAD</option>
+        <option value="AUD">A$ AUD</option>
+        <option value="JPY">¥ JPY</option>
+      </select>
+    </div>
+
+    <header class="header">
+      <div class="header-badge">
+        <span>📈</span>
+        <span data-i18n="badge">Revenue Tracker</span>
+      </div>
+      <h1 data-i18n="title">Track Your Goal.</h1>
+      <p data-i18n="subtitle">See how close you are to hitting your monthly revenue target.</p>
+    </header>
+
+    <div class="card">
+      <!-- Inputs -->
+      <div class="input-row">
+        <div class="form-group">
+          <label class="form-label" data-i18n="label_goal">Monthly Goal</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-goal" placeholder="7,000" min="0" step="500" value="7000" />
+            <span class="input-prefix" id="prefix-goal">$</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" data-i18n="label_earned">Earned So Far</label>
+          <div class="input-wrapper">
+            <input type="number" id="input-earned" placeholder="0" min="0" step="100" value="4200" />
+            <span class="input-prefix" id="prefix-earned">$</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Progress Ring -->
+      <div class="ring-section" id="ring-section">
+        <div class="ring-wrapper">
+          <svg class="ring-svg" viewBox="0 0 240 240">
+            <circle class="ring-track" cx="120" cy="120" r="90" />
+            <circle class="ring-glow" id="ring-glow" cx="120" cy="120" r="90" />
+            <circle class="ring-progress" id="ring-progress" cx="120" cy="120" r="90" />
+          </svg>
+          <div class="ring-center">
+            <div class="ring-percent" id="ring-percent">
+              <span id="percent-value">0</span><span class="ring-percent-symbol">%</span>
+            </div>
+            <div class="ring-status" id="ring-status" data-i18n="status_on_track">On Track</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Breakdown -->
+      <div class="breakdown">
+        <div class="breakdown-card earned">
+          <div class="breakdown-value" id="val-earned">$0</div>
+          <div class="breakdown-label" data-i18n="stat_earned">Earned</div>
+        </div>
+        <div class="breakdown-card remaining">
+          <div class="breakdown-value" id="val-remaining">$0</div>
+          <div class="breakdown-label" data-i18n="stat_remaining">Remaining</div>
+        </div>
+        <div class="breakdown-card daily">
+          <div class="breakdown-value" id="val-daily">$0</div>
+          <div class="breakdown-label" data-i18n="stat_daily">Needed / Day</div>
+        </div>
+      </div>
+
+      <!-- Milestone Bar -->
+      <div class="milestones">
+        <div class="milestones-header" data-i18n="milestone_header">Milestone Progress</div>
+        <div class="milestone-bar">
+          <div class="milestone-fill" id="milestone-fill" style="width:0%"></div>
+        </div>
+        <div class="milestone-markers">
+          <span class="milestone-marker" id="m-0">0%</span>
+          <span class="milestone-marker" id="m-25">25%</span>
+          <span class="milestone-marker" id="m-50">50%</span>
+          <span class="milestone-marker" id="m-75">75%</span>
+          <span class="milestone-marker" id="m-100">100%</span>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span data-i18n="footer">Part of Freelancer Business OS ✦</span>
+    </footer>
+  </div>
+
+  <script>
+    // ===== i18n =====
+    const T = {
+      en:{badge:"Revenue Tracker",title:"Track Your Goal.",subtitle:"See how close you are to hitting your monthly revenue target.",label_goal:"Monthly Goal",label_earned:"Earned So Far",status_on_track:"On Track",status_behind:"Behind Target",status_ahead:"Ahead of Target",status_complete:"Goal Achieved! 🎉",stat_earned:"Earned",stat_remaining:"Remaining",stat_daily:"Needed / Day",milestone_header:"Milestone Progress",footer:"Part of Freelancer Business OS ✦"},
+      ja:{badge:"売上トラッカー",title:"目標を追跡しよう。",subtitle:"月間売上目標への達成度を確認しましょう。",label_goal:"月間目標",label_earned:"現在の売上",status_on_track:"順調",status_behind:"遅れている",status_ahead:"目標超過ペース",status_complete:"目標達成！🎉",stat_earned:"売上",stat_remaining:"残り",stat_daily:"日額目標",milestone_header:"マイルストーン",footer:"Freelancer Business OS の一部 ✦"},
+      es:{badge:"Rastreador de Ingresos",title:"Rastrea Tu Meta.",subtitle:"Ve qué tan cerca estás de alcanzar tu meta mensual.",label_goal:"Meta Mensual",label_earned:"Ganado Hasta Ahora",status_on_track:"En Buen Camino",status_behind:"Por Debajo",status_ahead:"Por Encima",status_complete:"¡Meta Lograda! 🎉",stat_earned:"Ganado",stat_remaining:"Restante",stat_daily:"Necesario / Día",milestone_header:"Progreso de Hitos",footer:"Parte de Freelancer Business OS ✦"},
+      fr:{badge:"Suivi des Revenus",title:"Suivez Votre Objectif.",subtitle:"Voyez à quel point vous êtes proche de votre objectif mensuel.",label_goal:"Objectif Mensuel",label_earned:"Gagné Jusqu'ici",status_on_track:"En Bonne Voie",status_behind:"En Retard",status_ahead:"En Avance",status_complete:"Objectif Atteint ! 🎉",stat_earned:"Gagné",stat_remaining:"Restant",stat_daily:"Nécessaire / Jour",milestone_header:"Jalons",footer:"Partie de Freelancer Business OS ✦"},
+      de:{badge:"Umsatz-Tracker",title:"Verfolge Dein Ziel.",subtitle:"Sieh, wie nah du deinem monatlichen Umsatzziel bist.",label_goal:"Monatsziel",label_earned:"Bisher Verdient",status_on_track:"Im Plan",status_behind:"Hinter dem Ziel",status_ahead:"Vor dem Ziel",status_complete:"Ziel Erreicht! 🎉",stat_earned:"Verdient",stat_remaining:"Verbleibend",stat_daily:"Benötigt / Tag",milestone_header:"Meilensteine",footer:"Teil des Freelancer Business OS ✦"}
+    };
+
+    const CURRENCIES = {
+      USD:{symbol:"$",locale:"en-US"},GBP:{symbol:"£",locale:"en-GB"},EUR:{symbol:"€",locale:"de-DE"},
+      CAD:{symbol:"C$",locale:"en-CA"},AUD:{symbol:"A$",locale:"en-AU"},JPY:{symbol:"¥",locale:"ja-JP"}
+    };
+
+    let lang='en', currency='USD';
+    const CIRC = 2 * Math.PI * 90; // ~565.49
+
+    // DOM
+    const goalInput = document.getElementById('input-goal');
+    const earnedInput = document.getElementById('input-earned');
+    const ringProgress = document.getElementById('ring-progress');
+    const ringGlow = document.getElementById('ring-glow');
+    const percentValue = document.getElementById('percent-value');
+    const ringStatus = document.getElementById('ring-status');
+    const ringSection = document.getElementById('ring-section');
+    const valEarned = document.getElementById('val-earned');
+    const valRemaining = document.getElementById('val-remaining');
+    const valDaily = document.getElementById('val-daily');
+    const milestoneFill = document.getElementById('milestone-fill');
+
+    function fmt(n) {
+      return CURRENCIES[currency].symbol + Math.round(n).toLocaleString(CURRENCIES[currency].locale);
+    }
+
+    function updateSymbols() {
+      const s = CURRENCIES[currency].symbol;
+      document.getElementById('prefix-goal').textContent = s;
+      document.getElementById('prefix-earned').textContent = s;
+    }
+
+    function animatePercent(target) {
+      const current = parseInt(percentValue.textContent) || 0;
+      const start = performance.now();
+      const duration = 1200;
+      function tick(now) {
+        const elapsed = now - start;
+        const p = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        percentValue.textContent = Math.round(current + (target - current) * eased);
+        if (p < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    function setTier(pct) {
+      ringSection.className = 'ring-section';
+      if (pct >= 100) ringSection.classList.add('tier-over');
+      else if (pct >= 60) ringSection.classList.add('tier-high');
+      else if (pct >= 30) ringSection.classList.add('tier-mid');
+      else ringSection.classList.add('tier-low');
+    }
+
+    function getStatus(pct) {
+      const t = T[lang];
+      if (pct >= 100) return t.status_complete;
+      // Rough check based on day of month
+      const day = new Date().getDate();
+      const daysInMonth = new Date(new Date().getFullYear(), new Date().getMonth()+1, 0).getDate();
+      const expectedPct = (day / daysInMonth) * 100;
+      if (pct >= expectedPct + 10) return t.status_ahead;
+      if (pct < expectedPct - 10) return t.status_behind;
+      return t.status_on_track;
+    }
+
+    function calculate() {
+      const goal = parseFloat(goalInput.value) || 0;
+      const earned = parseFloat(earnedInput.value) || 0;
+      if (goal <= 0) return;
+
+      const pct = Math.min((earned / goal) * 100, 150);
+      const remaining = Math.max(goal - earned, 0);
+
+      // Days remaining in month
+      const now = new Date();
+      const daysInMonth = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+      const daysRemaining = Math.max(daysInMonth - now.getDate(), 1);
+      const dailyNeeded = remaining > 0 ? remaining / daysRemaining : 0;
+
+      // Ring
+      const clampedPct = Math.min(pct, 100);
+      const offset = CIRC * (1 - clampedPct / 100);
+      ringProgress.style.strokeDasharray = CIRC;
+      ringProgress.style.strokeDashoffset = offset;
+      ringGlow.style.strokeDasharray = CIRC;
+      ringGlow.style.strokeDashoffset = offset;
+
+      animatePercent(Math.round(pct));
+      setTier(pct);
+      ringStatus.textContent = getStatus(pct);
+
+      // Breakdown
+      valEarned.textContent = fmt(earned);
+      valRemaining.textContent = fmt(remaining);
+      valDaily.textContent = fmt(dailyNeeded);
+
+      // Milestone bar
+      milestoneFill.style.width = Math.min(pct, 100) + '%';
+
+      // Milestone markers
+      [0,25,50,75,100].forEach(m => {
+        const el = document.getElementById('m-' + m);
+        el.className = 'milestone-marker' + (pct >= m ? ' active' : '');
+      });
+    }
+
+    function applyLang(l) {
+      lang = l;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (T[l][k]) el.textContent = T[l][k];
+      });
+      calculate();
+    }
+
+    // Events
+    document.getElementById('lang-select').addEventListener('change', e => applyLang(e.target.value));
+    document.getElementById('currency-select').addEventListener('change', e => {
+      currency = e.target.value;
+      updateSymbols();
+      if (currency === 'JPY') {
+        goalInput.placeholder = '700,000';
+        earnedInput.placeholder = '0';
+      } else {
+        goalInput.placeholder = '7,000';
+        earnedInput.placeholder = '0';
+      }
+      calculate();
+    });
+
+    goalInput.addEventListener('input', calculate);
+    earnedInput.addEventListener('input', calculate);
+
+    // Init
+    updateSymbols();
+    setTimeout(calculate, 300);
+  </script>
+</body>
+</html>

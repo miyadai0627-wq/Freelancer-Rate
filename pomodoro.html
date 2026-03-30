@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro Focus Timer</title>
+  <meta name="description" content="A beautifully designed Pomodoro timer for freelancers. Track focus sessions and boost productivity." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-card: rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.06);
+      --border-subtle: rgba(255,255,255,0.08);
+      --text-primary: #f0f0f5;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-red: #ef4444;
+      --accent-red-soft: #f87171;
+      --accent-green: #10b981;
+      --accent-green-soft: #34d399;
+      --accent-blue: #3b82f6;
+      --accent-amber: #f59e0b;
+      --accent-purple: #8b5cf6;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --transition-fast: 0.2s cubic-bezier(0.4,0,0.2,1);
+      --transition-smooth: 0.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    html {
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 0%, rgba(239,68,68,0.1) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 100%, rgba(16,185,129,0.07) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    /* Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      pointer-events: none;
+      animation: float 20s ease-in-out infinite;
+    }
+    .orb-1{width:280px;height:280px;background:var(--accent-red);top:-80px;left:-40px}
+    .orb-2{width:220px;height:220px;background:var(--accent-green);bottom:-60px;right:-40px;animation-delay:-10s}
+
+    @keyframes float {
+      0%,100%{transform:translate(0,0) scale(1)}
+      50%{transform:translate(-15px,20px) scale(0.95)}
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* Language Selector */
+    .top-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 1rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .top-bar select {
+      padding: 6px 28px 6px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 100px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      transition: all var(--transition-fast);
+      -webkit-appearance: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236b7280' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    .top-bar select:hover { border-color: rgba(255,255,255,0.15); color: var(--text-primary) }
+
+    @keyframes fadeIn {
+      from{opacity:0}to{opacity:1}
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 1.75rem;
+    }
+
+    .header-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(239,68,68,0.12);
+      border: 1px solid rgba(239,68,68,0.2);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--accent-red-soft);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+      animation: fadeInDown 0.6s ease-out;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #f0f0f5, #9ca3af);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeInDown 0.6s ease-out 0.1s both;
+    }
+
+    .header p {
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      margin-top: 0.5rem;
+      animation: fadeInDown 0.6s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInDown {
+      from{opacity:0;transform:translateY(-12px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-xl);
+      padding: 2rem 1.75rem;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      animation: fadeInUp 0.6s ease-out 0.3s both;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top:0;left:0;right:0;height:1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+    }
+
+    @keyframes fadeInUp {
+      from{opacity:0;transform:translateY(20px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    /* Mode Tabs */
+    .mode-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 2rem;
+    }
+
+    .mode-tab {
+      flex: 1;
+      padding: 8px 0;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      text-align: center;
+    }
+
+    .mode-tab:hover { color: var(--text-secondary) }
+
+    .mode-tab.active-focus {
+      background: rgba(239,68,68,0.15);
+      color: var(--accent-red-soft);
+      box-shadow: 0 2px 8px rgba(239,68,68,0.1);
+    }
+
+    .mode-tab.active-short {
+      background: rgba(16,185,129,0.15);
+      color: var(--accent-green-soft);
+      box-shadow: 0 2px 8px rgba(16,185,129,0.1);
+    }
+
+    .mode-tab.active-long {
+      background: rgba(59,130,246,0.15);
+      color: var(--accent-blue);
+      box-shadow: 0 2px 8px rgba(59,130,246,0.1);
+    }
+
+    /* Timer Ring */
+    .timer-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .timer-ring-wrapper {
+      position: relative;
+      width: 220px;
+      height: 220px;
+    }
+
+    .timer-ring {
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .timer-ring-bg {
+      fill: none;
+      stroke: rgba(255,255,255,0.05);
+      stroke-width: 6;
+    }
+
+    .timer-ring-progress {
+      fill: none;
+      stroke: var(--accent-red);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 628.32;
+      stroke-dashoffset: 0;
+      transition: stroke-dashoffset 1s linear, stroke var(--transition-fast);
+      filter: drop-shadow(0 0 8px rgba(239,68,68,0.3));
+    }
+
+    .timer-ring-progress.short-break { stroke: var(--accent-green); filter: drop-shadow(0 0 8px rgba(16,185,129,0.3)) }
+    .timer-ring-progress.long-break { stroke: var(--accent-blue); filter: drop-shadow(0 0 8px rgba(59,130,246,0.3)) }
+
+    .timer-display {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .timer-time {
+      font-size: 3.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+    }
+
+    .timer-mode-label {
+      font-size: 0.6875rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 0.5rem;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .btn-control {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 50%;
+      background: rgba(255,255,255,0.04);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+
+    .btn-control:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+      color: var(--text-primary);
+    }
+
+    .btn-control svg { width: 18px; height: 18px }
+
+    .btn-main {
+      width: 64px;
+      height: 64px;
+      border: none;
+      border-radius: 50%;
+      background: var(--accent-red);
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+      box-shadow: 0 4px 20px rgba(239,68,68,0.3);
+    }
+
+    .btn-main:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 30px rgba(239,68,68,0.4);
+    }
+
+    .btn-main:active { transform: scale(0.98) }
+    .btn-main svg { width: 24px; height: 24px }
+
+    .btn-main.short-break { background: var(--accent-green); box-shadow: 0 4px 20px rgba(16,185,129,0.3) }
+    .btn-main.short-break:hover { box-shadow: 0 6px 30px rgba(16,185,129,0.4) }
+    .btn-main.long-break { background: var(--accent-blue); box-shadow: 0 4px 20px rgba(59,130,246,0.3) }
+    .btn-main.long-break:hover { box-shadow: 0 6px 30px rgba(59,130,246,0.4) }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.625rem;
+    }
+
+    .stat-card {
+      padding: 0.875rem 0.75rem;
+      border-radius: var(--radius-md);
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border-subtle);
+      text-align: center;
+      transition: all var(--transition-fast);
+    }
+
+    .stat-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(255,255,255,0.12);
+    }
+
+    .stat-value {
+      font-size: 1.375rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .stat-label {
+      font-size: 0.5625rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .stat-card.focus .stat-value { color: var(--accent-red-soft) }
+    .stat-card.hours .stat-value { color: var(--accent-amber) }
+    .stat-card.streak .stat-value { color: var(--accent-purple) }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      animation: fadeInUp 0.6s ease-out 0.5s both;
+    }
+
+    /* Pulse animation when timer is running */
+    @keyframes pulse {
+      0%,100%{opacity:1}
+      50%{opacity:0.6}
+    }
+
+    .timer-running .timer-mode-label {
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    /* Notification flash */
+    @keyframes flash {
+      0%,100%{opacity:1}
+      50%{opacity:0.3}
+    }
+
+    .timer-done .timer-time {
+      animation: flash 0.8s ease-in-out 5;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 1.5rem 0.75rem }
+      .card { padding: 1.5rem 1.25rem }
+      .timer-ring-wrapper { width: 180px; height: 180px }
+      .timer-time { font-size: 2.75rem }
+      .stats { grid-template-columns: repeat(3, 1fr); gap: 0.5rem }
+    }
+  </style>
+</head>
+<body>
+  <div class="orb orb-1" aria-hidden="true"></div>
+  <div class="orb orb-2" aria-hidden="true"></div>
+
+  <div class="container">
+    <div class="top-bar">
+      <select id="lang-select" aria-label="Language">
+        <option value="en">🌐 English</option>
+        <option value="ja">🇯🇵 日本語</option>
+        <option value="es">🇪🇸 Español</option>
+        <option value="fr">🇫🇷 Français</option>
+        <option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+
+    <header class="header">
+      <div class="header-badge">
+        <span>🍅</span>
+        <span data-i18n="badge">Focus Timer</span>
+      </div>
+      <h1 data-i18n="title">Stay Focused.</h1>
+      <p data-i18n="subtitle">Work in sprints. Rest intentionally. Get more done.</p>
+    </header>
+
+    <div class="card">
+      <!-- Mode Tabs -->
+      <div class="mode-tabs">
+        <button class="mode-tab active-focus" data-mode="focus" data-i18n="mode_focus">Focus</button>
+        <button class="mode-tab" data-mode="short" data-i18n="mode_short">Short Break</button>
+        <button class="mode-tab" data-mode="long" data-i18n="mode_long">Long Break</button>
+      </div>
+
+      <!-- Timer -->
+      <div class="timer-container" id="timer-container">
+        <div class="timer-ring-wrapper">
+          <svg class="timer-ring" viewBox="0 0 220 220">
+            <circle class="timer-ring-bg" cx="110" cy="110" r="100" />
+            <circle class="timer-ring-progress" id="ring-progress" cx="110" cy="110" r="100" />
+          </svg>
+          <div class="timer-display">
+            <div class="timer-time" id="timer-time">25:00</div>
+            <div class="timer-mode-label" id="timer-label" data-i18n="label_focus">Focus Session</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div class="controls">
+        <button class="btn-control" id="btn-reset" title="Reset" aria-label="Reset timer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+        </button>
+        <button class="btn-main" id="btn-start" aria-label="Start timer">
+          <svg id="icon-play" viewBox="0 0 24 24" fill="currentColor" stroke="none">
+            <polygon points="6 3 20 12 6 21 6 3" />
+          </svg>
+          <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="display:none">
+            <rect x="5" y="3" width="5" height="18" rx="1" />
+            <rect x="14" y="3" width="5" height="18" rx="1" />
+          </svg>
+        </button>
+        <button class="btn-control" id="btn-skip" title="Skip" aria-label="Skip to next">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 4 15 12 5 20 5 4" fill="currentColor" />
+            <line x1="19" y1="5" x2="19" y2="19" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat-card focus">
+          <div class="stat-value" id="stat-sessions">0</div>
+          <div class="stat-label" data-i18n="stat_sessions">Sessions</div>
+        </div>
+        <div class="stat-card hours">
+          <div class="stat-value" id="stat-hours">0.0</div>
+          <div class="stat-label" data-i18n="stat_hours">Hours</div>
+        </div>
+        <div class="stat-card streak">
+          <div class="stat-value" id="stat-streak">0</div>
+          <div class="stat-label" data-i18n="stat_streak">Streak</div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <span data-i18n="footer">Part of Freelancer Business OS ✦</span>
+    </footer>
+  </div>
+
+  <script>
+    // ===== I18N =====
+    const T = {
+      en: {
+        badge:"Focus Timer",title:"Stay Focused.",subtitle:"Work in sprints. Rest intentionally. Get more done.",
+        mode_focus:"Focus",mode_short:"Short Break",mode_long:"Long Break",
+        label_focus:"Focus Session",label_short:"Short Break",label_long:"Long Break",
+        stat_sessions:"Sessions",stat_hours:"Hours",stat_streak:"Streak",
+        footer:"Part of Freelancer Business OS ✦",
+        notif_focus:"Focus session complete! Time for a break.",
+        notif_break:"Break is over! Ready to focus?"
+      },
+      ja: {
+        badge:"集中タイマー",title:"集中しよう。",subtitle:"スプリントで働き、意識的に休み、もっと成果を出そう。",
+        mode_focus:"集中",mode_short:"小休憩",mode_long:"大休憩",
+        label_focus:"集中セッション",label_short:"小休憩",label_long:"大休憩",
+        stat_sessions:"セッション",stat_hours:"時間",stat_streak:"連続",
+        footer:"Freelancer Business OS の一部 ✦",
+        notif_focus:"集中セッション完了！休憩しましょう。",
+        notif_break:"休憩終了！集中する準備はできましたか？"
+      },
+      es: {
+        badge:"Temporizador",title:"Mantén el Enfoque.",subtitle:"Trabaja en sprints. Descansa con intención. Logra más.",
+        mode_focus:"Enfoque",mode_short:"Pausa Corta",mode_long:"Pausa Larga",
+        label_focus:"Sesión de Enfoque",label_short:"Pausa Corta",label_long:"Pausa Larga",
+        stat_sessions:"Sesiones",stat_hours:"Horas",stat_streak:"Racha",
+        footer:"Parte de Freelancer Business OS ✦",
+        notif_focus:"¡Sesión completa! Hora de descansar.",
+        notif_break:"¡Descanso terminado! ¿Listo para enfocarte?"
+      },
+      fr: {
+        badge:"Minuteur Focus",title:"Restez Concentré.",subtitle:"Travaillez par sprints. Reposez-vous intentionnellement.",
+        mode_focus:"Focus",mode_short:"Pause Courte",mode_long:"Pause Longue",
+        label_focus:"Session Focus",label_short:"Pause Courte",label_long:"Pause Longue",
+        stat_sessions:"Sessions",stat_hours:"Heures",stat_streak:"Série",
+        footer:"Partie de Freelancer Business OS ✦",
+        notif_focus:"Session terminée ! Pause méritée.",
+        notif_break:"Pause terminée ! Prêt à se concentrer ?"
+      },
+      de: {
+        badge:"Fokus-Timer",title:"Bleib Fokussiert.",subtitle:"Arbeite in Sprints. Ruhe bewusst. Schaffe mehr.",
+        mode_focus:"Fokus",mode_short:"Kurze Pause",mode_long:"Lange Pause",
+        label_focus:"Fokus-Session",label_short:"Kurze Pause",label_long:"Lange Pause",
+        stat_sessions:"Sessions",stat_hours:"Stunden",stat_streak:"Serie",
+        footer:"Teil des Freelancer Business OS ✦",
+        notif_focus:"Fokus-Session beendet! Zeit für eine Pause.",
+        notif_break:"Pause vorbei! Bereit zum Fokussieren?"
+      }
+    };
+
+    let lang = 'en';
+
+    function applyLang(l) {
+      lang = l;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (T[l][k]) el.textContent = T[l][k];
+      });
+    }
+
+    document.getElementById('lang-select').addEventListener('change', e => applyLang(e.target.value));
+
+    // ===== Timer Config =====
+    const MODES = {
+      focus: { minutes: 25, labelKey: 'label_focus', color: 'focus' },
+      short: { minutes: 5, labelKey: 'label_short', color: 'short-break' },
+      long:  { minutes: 15, labelKey: 'label_long', color: 'long-break' }
+    };
+
+    const CIRCUMFERENCE = 2 * Math.PI * 100; // ~628.32
+
+    // ===== State =====
+    let currentMode = 'focus';
+    let totalSeconds = MODES.focus.minutes * 60;
+    let remainingSeconds = totalSeconds;
+    let isRunning = false;
+    let intervalId = null;
+    let sessions = 0;
+    let totalFocusSeconds = 0;
+    let streak = 0;
+
+    // ===== DOM =====
+    const timerTime = document.getElementById('timer-time');
+    const timerLabel = document.getElementById('timer-label');
+    const ringProgress = document.getElementById('ring-progress');
+    const btnStart = document.getElementById('btn-start');
+    const btnReset = document.getElementById('btn-reset');
+    const btnSkip = document.getElementById('btn-skip');
+    const iconPlay = document.getElementById('icon-play');
+    const iconPause = document.getElementById('icon-pause');
+    const timerContainer = document.getElementById('timer-container');
+    const statSessions = document.getElementById('stat-sessions');
+    const statHours = document.getElementById('stat-hours');
+    const statStreak = document.getElementById('stat-streak');
+    const modeTabs = document.querySelectorAll('.mode-tab');
+
+    // ===== Functions =====
+    function formatTime(s) {
+      const m = Math.floor(s / 60);
+      const sec = s % 60;
+      return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`;
+    }
+
+    function updateDisplay() {
+      timerTime.textContent = formatTime(remainingSeconds);
+      const offset = CIRCUMFERENCE * (1 - remainingSeconds / totalSeconds);
+      ringProgress.style.strokeDasharray = CIRCUMFERENCE;
+      ringProgress.style.strokeDashoffset = offset;
+    }
+
+    function setMode(mode) {
+      if (isRunning) stop();
+      currentMode = mode;
+      totalSeconds = MODES[mode].minutes * 60;
+      remainingSeconds = totalSeconds;
+
+      // Update ring color
+      ringProgress.className = 'timer-ring-progress';
+      if (mode === 'short') ringProgress.classList.add('short-break');
+      if (mode === 'long') ringProgress.classList.add('long-break');
+
+      // Update button color
+      btnStart.className = 'btn-main';
+      if (mode === 'short') btnStart.classList.add('short-break');
+      if (mode === 'long') btnStart.classList.add('long-break');
+
+      // Update tabs
+      modeTabs.forEach(tab => {
+        tab.className = 'mode-tab';
+        if (tab.dataset.mode === mode) {
+          if (mode === 'focus') tab.classList.add('active-focus');
+          if (mode === 'short') tab.classList.add('active-short');
+          if (mode === 'long') tab.classList.add('active-long');
+        }
+      });
+
+      // Update label
+      timerLabel.setAttribute('data-i18n', MODES[mode].labelKey);
+      timerLabel.textContent = T[lang][MODES[mode].labelKey];
+
+      timerContainer.classList.remove('timer-running', 'timer-done');
+      updateDisplay();
+    }
+
+    function start() {
+      if (remainingSeconds <= 0) return;
+      isRunning = true;
+      iconPlay.style.display = 'none';
+      iconPause.style.display = 'block';
+      timerContainer.classList.add('timer-running');
+      timerContainer.classList.remove('timer-done');
+
+      intervalId = setInterval(() => {
+        remainingSeconds--;
+
+        if (currentMode === 'focus') {
+          totalFocusSeconds++;
+          statHours.textContent = (totalFocusSeconds / 3600).toFixed(1);
+        }
+
+        updateDisplay();
+
+        if (remainingSeconds <= 0) {
+          clearInterval(intervalId);
+          isRunning = false;
+          iconPlay.style.display = 'block';
+          iconPause.style.display = 'none';
+          timerContainer.classList.remove('timer-running');
+          timerContainer.classList.add('timer-done');
+
+          if (currentMode === 'focus') {
+            sessions++;
+            streak++;
+            statSessions.textContent = sessions;
+            statStreak.textContent = streak;
+            playSound();
+            autoNext();
+          } else {
+            playSound();
+            autoNext();
+          }
+        }
+      }, 1000);
+    }
+
+    function stop() {
+      isRunning = false;
+      clearInterval(intervalId);
+      iconPlay.style.display = 'block';
+      iconPause.style.display = 'none';
+      timerContainer.classList.remove('timer-running');
+    }
+
+    function reset() {
+      stop();
+      remainingSeconds = totalSeconds;
+      timerContainer.classList.remove('timer-done');
+      updateDisplay();
+    }
+
+    function autoNext() {
+      setTimeout(() => {
+        if (currentMode === 'focus') {
+          // Every 4 sessions, take a long break
+          if (sessions % 4 === 0) {
+            setMode('long');
+          } else {
+            setMode('short');
+          }
+        } else {
+          setMode('focus');
+        }
+      }, 2000);
+    }
+
+    function playSound() {
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const notes = [523.25, 659.25, 783.99]; // C5, E5, G5
+        notes.forEach((freq, i) => {
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.frequency.value = freq;
+          osc.type = 'sine';
+          gain.gain.setValueAtTime(0.15, ctx.currentTime + i * 0.2);
+          gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.2 + 0.5);
+          osc.start(ctx.currentTime + i * 0.2);
+          osc.stop(ctx.currentTime + i * 0.2 + 0.5);
+        });
+      } catch(e) {}
+    }
+
+    // ===== Event Listeners =====
+    btnStart.addEventListener('click', () => isRunning ? stop() : start());
+    btnReset.addEventListener('click', reset);
+    btnSkip.addEventListener('click', () => {
+      if (currentMode === 'focus') {
+        setMode(sessions > 0 && sessions % 4 === 0 ? 'long' : 'short');
+      } else {
+        setMode('focus');
+      }
+    });
+
+    modeTabs.forEach(tab => {
+      tab.addEventListener('click', () => setMode(tab.dataset.mode));
+    });
+
+    // ===== Init =====
+    updateDisplay();
+  </script>
+</body>
+</html>
